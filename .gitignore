@@ -3,3 +3,4 @@
 .idea/
 mal.egg-info/
 *.pyc
+doc/build
