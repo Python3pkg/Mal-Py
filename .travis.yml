@@ -1,0 +1,17 @@
+language: python
+python:
+ - 2.7
+ - 3.3
+ - 3.4
+ - 3.5
+
+script:
+ - python setup.py test
+ - python -m flake8 churchrepl
+ - python -m pylint churchrepl
+
+install:
+  python setup.py install
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
