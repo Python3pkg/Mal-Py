@@ -4,3 +4,13 @@
 mal.egg-info/
 *.pyc
 doc/build
+dist/
+build/
+*.iml
+*.mal
+bin/
+doc/source/.static/
+doc/source/.templates/
+malpy.egg-info/
+malpy/__pycache__/
+tests/__pycache__/

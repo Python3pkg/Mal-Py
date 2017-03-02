@@ -4,11 +4,12 @@ python:
  - 3.3
  - 3.4
  - 3.5
+ - 3.6
 
 script:
  - python setup.py test
- - python -m flake8 churchrepl
- - python -m pylint churchrepl
+ - python -m flake8 malpy
+ - python -m pylint malpy
 
 install:
   python setup.py install

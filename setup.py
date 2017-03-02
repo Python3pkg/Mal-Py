@@ -18,9 +18,9 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_dsecription = f.read()
 
 config = {
-    'url': 'https://github.com/LSmit202/mal',
-    'name': 'mal',
-    'version': '0.1.0',
+    'url': 'https://github.com/LSmit202/malpy',
+    'name': 'malpy',
+    'version': '0.3.2',
     'description': 'Minimal Assembly Language Virtual Machine',
     'long_description': long_dsecription,
     'author': 'Luke Smith',
@@ -28,10 +28,10 @@ config = {
     'license': 'BSD',
     'entry_points': {
         'console_scripts': [
-            'mal = mal.__init__:main'
+            'malpy = malpy.__main__:main'
         ]
     },
-    'packages': ['mal']
+    'packages': ['malpy']
 }
 
 setup(**config)
