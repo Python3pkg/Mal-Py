@@ -5,6 +5,8 @@ Mal assembler.
 import re
 import collections
 
+Token = collections.namedtuple('Token', ['type', 'value'])
+
 
 class Parser:
     """
@@ -15,22 +17,39 @@ class Parser:
     """
 
     def __init__(self):
-        self.Token = collections.namedtuple('Token', ['type', 'value'])
         self.scanner = re.Scanner([
-            (r"\n|\r\n|\r", lambda _, tok: self.Token('EOL', tok)),
-            (r"V([0-5][0-9]|6[0-3])", lambda _, tok: self.Token('VAL', tok)),
-            (r"M([0-5][0-9]|6[0-3])", lambda _, tok: self.Token('MEM', tok)),
-            (r"R[0-9a-f]", lambda _, tok: self.Token('REG', tok)),
-            (r"L\d+", lambda _, tok: self.Token('LABEL', tok)),
-            (r",", lambda _, tok: self.Token('COMMA', tok)),
-            (r"[ \t]", lambda _, tok: self.Token('WS', tok)),
-            (r"MOVEI|LOAD|STORE|MOVE|ADD|INC|SUB|DEC|MUL|DIV|BEQ|BLT|BGT|BR"
-             r"|END",
-             lambda _, tok: self.Token('INSTR', tok))
+            (r"\n|\r\n|\r", lambda _, tok: Token('EOL', tok)),
+            (r"V([0-5][0-9]|6[0-3])", lambda _, tok: Token('VAL', tok)),
+            (r"M([0-5][0-9]|6[0-3])", lambda _, tok: Token('MEM', tok)),
+            (r"R[0-9a-f]", lambda _, tok: Token('REG', tok)),
+            (r"L\d+", lambda _, tok: Token('LABEL', tok)),
+            (r",", lambda _, tok: Token('COMMA', tok)),
+            (r"[ \t]", lambda _, tok: Token('WS', tok)),
+            (r"MOVEI|LOAD|STORE|MOVE|ADD|INC|SUB|DEC|MUL|DIV|BEQ|BLT|BGT"
+             r"|BR|END",
+             lambda _, tok: Token('INSTR', tok)),
+            (r".+", lambda _, tok: Token('NTYPE', 'NOP'))
         ])
         self.tokens = []
         self.current_token = None
         self.next_token = None
+        self.operand_counts = {
+            'END': 0,
+            'BR': 1,
+            'INC': 1,
+            'DEC': 1,
+            'MOVE': 2,
+            'MOVEI': 2,
+            'LOAD': 2,
+            'STORE': 2,
+            'ADD': 3,
+            'SUB': 3,
+            'MUL': 3,
+            'DIV': 3,
+            'BEQ': 3,
+            'BLT': 3,
+            'BGT': 3
+        }
 
     def generate_tokens(self, text):
         """
@@ -56,8 +75,12 @@ class Parser:
         return self._program()
 
     def _advance(self):
-        self.current_token = self.next_token,
+        self.current_token = self.next_token
         self.next_token = next(self.tokens, None)
+
+    def _eat_to_eol(self):
+        while self.current_token and not self._accept('EOL'):
+            self._advance()
 
     def _accept(self, token_type):
         # if there is next token and token type matches
@@ -71,72 +94,65 @@ class Parser:
         lines = []
         line = self._instruction()
         lines.append(line)
-        if not self._accept('EOL') and line:
-            lines.append('ERR:001:Newline')
-            return lines
-        while self.next_token:
+        # Don't replace other errors or valid lines
+        if not self._accept('EOL') and line and line[0] != 'E':
+            lines[-1] = 'ERR:001:Newline'
+            self._eat_to_eol()
+        while self.current_token and self.next_token:
             line = self._instruction()
             lines.append(line)
-            if not self._accept('EOL') and line:
-                lines.append('ERR:001:Newline')
-                break
+            # Don't replace other errors or valid lines
+            if not self._accept('EOL')\
+                    and line and line[0] != 'E':
+                lines[-1] = 'ERR:001:Newline'
+                self._eat_to_eol()
         return lines
 
     def _instruction(self):
         operation_code = self._opcode()
+        if not operation_code:
+            self._eat_to_eol()
+            return 'ERR:003:Invalid mnemonic'
+
         operands = []
         bad_operand = False
-        if operation_code != 'END' and self.next_token:
-            op = self._operand()
-            if not op:
+        operand = self._operand()
+        if operation_code != 'END' and not operand:
+            bad_operand = True
+        if operand:
+            operands.append(operand)
+        while self._accept('COMMA'):
+            operand = self._operand()
+            if not operand:
                 bad_operand = True
-            operands.append(op)
-            while self._accept('COMMA'):
-                op = self._operand()
-                if not op:
-                    bad_operand = True
-                operands.append(op)
+            operands.append(operand)
 
-        if not operation_code:
-            return 'ERR:003:Invalid mnemonic'
         if bad_operand:
-            return 'ERR:004:Invalid operand type'
+            self._eat_to_eol()
+            return 'ERR:004:Invalid operand'
 
-        if operation_code in ['END']:
-            if len(operands) is 0:
+        if operation_code in self.operand_counts:
+            if len(operands) == self.operand_counts[operation_code]:
                 return [operation_code, operands]
-            return 'ERR:002:Operand count'
-        elif operation_code in ['BR', 'INC', 'DEC']:
-            if len(operands) is 1:
-                return [operation_code, operands]
-            return 'ERR:002:Operand count'
-        elif operation_code in ['MOVE', 'MOVEI', 'LOAD', 'STORE']:
-            if len(operands) is 2:
-                return [operation_code, operands]
-            return 'ERR:002:Operand count'
-        elif operation_code in ['ADD', 'SUB', 'MUL', 'DIV', 'BEQ', 'BLT', 'BGT']:
-            if len(operands) is 3:
-                return [operation_code, operands]
-            return 'ERR:002:Operand count'
+            return 'ERR:002:Invalid operand count'
         return 'ERR:003:Invalid mnemonic'
 
     def _opcode(self):
         if self._accept('INSTR'):
-            assert isinstance(self.current_token, self.Token)
             return self.current_token.value
         else:
             return None
 
     def _operand(self):
-        if self._accept('REG') or self._accept('MEM') or \
-                self._accept('LABEL') or self._accept('VAL'):
-            assert isinstance(self.current_token, self.Token)
+        if (self._accept('REG') or self._accept('MEM') or
+                self._accept('LABEL') or self._accept('VAL')):
             return self.current_token.value
         return None
 
 
 if __name__ == '__main__':
     import sys
-    p = Parser()
+
+    PARSER = Parser()
     for arg in sys.argv[1:]:
-        print(p.parse(open(arg).read()))
+        print(PARSER.parse(open(arg).read()))

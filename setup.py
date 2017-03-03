@@ -4,11 +4,7 @@
 Setup.py for Mal-py
 """
 
-
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -31,7 +27,7 @@ config = {
             'malpy = malpy.__main__:main'
         ]
     },
-    'packages': ['malpy']
+    'packages': find_packages()
 }
 
 setup(**config)
