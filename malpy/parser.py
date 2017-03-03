@@ -2,7 +2,6 @@
 """
 Mal assembler.
 """
-from __future__ import print_function
 import re
 import collections
 
@@ -136,7 +135,7 @@ class Parser(object):
             if len(operands) == self.operand_counts[operation_code]:
                 return [operation_code, operands]
             return 'ERR:002:Invalid operand count'
-        return 'ERR:003:Invalid mnemonic'
+        # return 'ERR:003:Invalid mnemonic' # Unreachable
 
     def _opcode(self):
         if self._accept('INSTR'):
@@ -149,11 +148,3 @@ class Parser(object):
                 self._accept('LABEL') or self._accept('VAL')):
             return self.current_token.value
         return None
-
-
-if __name__ == '__main__':
-    import sys
-
-    PARSER = Parser()
-    for arg in sys.argv[1:]:
-        print(PARSER.parse(open(arg).read()))

@@ -122,6 +122,9 @@ class TestMalParser(object):
         test_err001 = PARSER.parse("MOVEI Ra, V63")
         assert_equal(test_err001, ['ERR:001:Newline'])
 
+        test_err001_while = PARSER.parse("MOVEI V63, R0\nMOVEI V63, R0")
+        assert_equal(test_err001_while, [['MOVEI', ['V63', 'R0']], 'ERR:001:Newline'])
+
         test_err002 = PARSER.parse("MOVEI Ra\n")
         assert_equal(test_err002, ['ERR:002:Invalid operand count'])
 
@@ -130,6 +133,9 @@ class TestMalParser(object):
 
         test_err004 = PARSER.parse("MOVEI R0, NOT_HERE\n")
         assert_equal(test_err004, ['ERR:004:Invalid operand'])
+
+        test_err004_first = PARSER.parse("MOVEI NOT_HERE, R0\n")
+        assert_equal(test_err004_first, ['ERR:004:Invalid operand'])
 
         instrs = "MOVEI LOAD STORE MOVE ADD INC SUB DEC MUL DIV BEQ " \
                  "BLT BGT BR END"

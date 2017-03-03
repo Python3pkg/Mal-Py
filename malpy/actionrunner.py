@@ -68,7 +68,7 @@ class ActionRunner(object):
         self.memory = memory
         while not any([self.flags.halt, self.flags.div_by_zero,
                        self.flags.out_of_bounds, self.flags.bad_operand]):
-            if self.program_counter > len(program):
+            if self.program_counter >= len(program):
                 self.flags.out_of_bounds = True
             else:
                 opcode, operands = program[self.program_counter]
