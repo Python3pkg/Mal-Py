@@ -2,6 +2,7 @@
 """
 Mal Runtime environment with JIT Actions.
 """
+from __future__ import print_function
 import collections
 
 Flags = collections.namedtuple('Flags', ('halt',
@@ -19,7 +20,7 @@ def no_op(_):
     pass
 
 
-class ActionRunner:
+class ActionRunner(object):
     """
     This is a runtime environment.
     It sets memory on instantiation and zeros the registers.

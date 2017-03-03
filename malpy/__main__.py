@@ -4,6 +4,7 @@
 """
 The Mal Language Parser and Runtime Enviroment main runner
 """
+from __future__ import print_function
 import sys
 from random import shuffle
 
