@@ -23,9 +23,10 @@ def main():
         memory = list(range(64))
         shuffle(memory)
         token_ast = parser.parse(open(arg).read())
-        output = runner.run(token_ast, memory)
         print(token_ast)
-        print(output)
+        if not any([token[0] == 'E' for token in token_ast]):
+            output = runner.run(token_ast, memory)
+            print(output)
 
 
 if __name__ == '__main__':

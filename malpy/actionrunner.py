@@ -3,12 +3,10 @@
 Mal Runtime environment with JIT Actions.
 """
 from __future__ import print_function
-import collections
+from recordclass import recordclass
 
-Flags = collections.namedtuple('Flags', ('halt',
-                                         'div_by_zero',
-                                         'out_of_bounds',
-                                         'bad_operand'))
+RunnerFlags = recordclass('RunnerFlags', 'halt div_by_zero '
+                                         'out_of_bounds bad_operand')
 
 
 def no_op(_):
@@ -29,7 +27,7 @@ class ActionRunner(object):
     def __init__(self, actions):
         self.actions = actions
         self.memory = None
-        self.flags = Flags(False, False, False, False)
+        self.flags = RunnerFlags(False, False, False, False)
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
         self.evaluate = {
@@ -55,7 +53,7 @@ class ActionRunner(object):
         Resets the memory, registers and program counter.
         """
         self.memory = None
-        self.flags = Flags(False, False, False, False)
+        self.flags = RunnerFlags(False, False, False, False)
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
 
@@ -67,14 +65,13 @@ class ActionRunner(object):
         :param memory: The memory contents on which to run the program.
         :return: Memory contents
         """
-        inst = program
         self.memory = memory
         while not any([self.flags.halt, self.flags.div_by_zero,
                        self.flags.out_of_bounds, self.flags.bad_operand]):
-            if self.program_counter > len(inst):
+            if self.program_counter > len(program):
                 self.flags.out_of_bounds = True
             else:
-                opcode, operands = inst[self.program_counter]
+                opcode, operands = program[self.program_counter]
                 self.evaluate[opcode](operands)
                 self.program_counter += 1
 
