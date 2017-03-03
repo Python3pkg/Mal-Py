@@ -5,8 +5,8 @@ Mal Runtime environment with JIT Actions.
 from __future__ import print_function
 from recordclass import recordclass
 
-RunnerFlags = recordclass('RunnerFlags', 'halt div_by_zero '
-                                         'out_of_bounds bad_operand')
+FLAGS = recordclass('RunnerFlags',
+                    'halt div_by_zero out_of_bounds bad_operand')
 
 
 def no_op(_):
@@ -27,7 +27,7 @@ class ActionRunner(object):
     def __init__(self, actions):
         self.actions = actions
         self.memory = None
-        self.flags = RunnerFlags(False, False, False, False)
+        self.flags = FLAGS(False, False, False, False)
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
         self.evaluate = {
@@ -53,7 +53,7 @@ class ActionRunner(object):
         Resets the memory, registers and program counter.
         """
         self.memory = None
-        self.flags = RunnerFlags(False, False, False, False)
+        self.flags = FLAGS(False, False, False, False)
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
 
@@ -75,7 +75,6 @@ class ActionRunner(object):
                 self.evaluate[opcode](operands)
                 self.program_counter += 1
 
-        self.registers = [0 for _ in range(16)]
         if not any([self.flags.div_by_zero,
                     self.flags.out_of_bounds,
                     self.flags.bad_operand]):

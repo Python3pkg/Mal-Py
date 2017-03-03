@@ -2,14 +2,7 @@
 """
 Mal Runtime environment.
 """
-import collections
-
 import malpy.actionrunner
-
-Flags = collections.namedtuple('Flags', ('halt',
-                                         'div_by_zero',
-                                         'out_of_bounds',
-                                         'bad_operand'))
 
 
 class Runner(malpy.actionrunner.ActionRunner):

@@ -31,15 +31,8 @@ operand_counts = {
 
 class TestMalParser(object):
     """
-    Tests the parser class for consistency in public facing API.
+    Tests the parser class for consistency in the public facing API.
     """
-    @classmethod
-    def setup_class(cls):
-        """
-        Creates the parser to use for testing.
-        :return: None
-        """
-
     def test_generate_tokens(self):
         """
         Makes sure token generator yields proper tokens.

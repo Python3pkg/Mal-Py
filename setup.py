@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_dsecription = f.read()
 
 config = {
-    'url': 'https://github.com/LSmit202/malpy',
+    'url': 'https://github.com/LSmit202/Mal-Py',
     'name': 'malpy',
     'version': '0.3.4',
     'description': 'Minimal Assembly Language Virtual Machine',
