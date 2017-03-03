@@ -9,7 +9,7 @@ import collections
 Token = collections.namedtuple('Token', ['type', 'value'])
 
 
-class Parser:
+class Parser(object):
     """
     Implementation of a recursive descent parser.1
     Each method implement a single grammar rule.
