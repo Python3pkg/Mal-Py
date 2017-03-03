@@ -12,8 +12,6 @@ imagesize==0.7.1
 isort==4.2.5
 Jinja2==2.9.5
 lazy-object-proxy==1.2.2
-mal==0.1.0
-malpy==0.3.2
 MarkupSafe==0.23
 mccabe==0.6.1
 mock==2.0.0
