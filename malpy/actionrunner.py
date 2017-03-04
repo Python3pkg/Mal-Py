@@ -53,7 +53,8 @@ class ActionRunner(object):
         Resets the memory, registers and program counter.
         """
         self.memory = None
-        self.flags = FLAGS(False, False, False, False)
+        self.flags = FLAGS(False, False, False)
+        self.halt = False
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
 
@@ -75,10 +76,14 @@ class ActionRunner(object):
                 self.evaluate[opcode](operands)
                 self.program_counter += 1
 
-        if not any(self.flags):
+        if not any([self.flags.div_by_zero,
+                    self.flags.out_of_bounds,
+                    self.flags.bad_operand]):
             return self.memory
         else:
-            return self.flags
+            return [self.flags.div_by_zero,
+                    self.flags.out_of_bounds,
+                    self.flags.bad_operand]
 
     def _move(self, ops):
         if ops[0].startswith('R') and ops[1].startswith('R'):

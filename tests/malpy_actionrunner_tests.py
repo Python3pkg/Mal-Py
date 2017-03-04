@@ -86,9 +86,10 @@ class TestMalActionRunner(object):
                         "BLT V63, V63, V63\n"
                         "BGT V63, V63, V63\n"
                         "BEQ V63, V63, V63\n"
-                        "BR V63\n").split('\n')
+                        "BR V63").split('\n')
 
         for bad_instr in bad_operands:
+            RUNNER.reset()
             prog = bad_instr+"\nEND\n"
             bad_ast = PARSER.parse(prog)
             print(prog, bad_ast)
