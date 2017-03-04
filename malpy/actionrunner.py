@@ -95,10 +95,10 @@ class ActionRunner(object):
 
     def _movei(self, ops):
         if ops[0].startswith('V') and ops[1].startswith('R'):
-            valbl0 = int(ops[0][1:])
+            val0 = int(ops[0][1:])
             reg1 = int(ops[1][1:], 16)
-            self.actions.get('MOVEI', no_op)([('VAL', valbl0), ('REG', reg1)])
-            self.registers[reg1] = valbl0
+            self.actions.get('MOVEI', no_op)([('VAL', val0), ('REG', reg1)])
+            self.registers[reg1] = val0
         else:
             self.flags.bad_operand = True
 

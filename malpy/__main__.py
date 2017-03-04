@@ -6,7 +6,6 @@ The Mal Language Parser and Runtime Enviroment main runner
 """
 from __future__ import print_function
 import sys
-from random import shuffle
 
 import malpy.parser
 import malpy.runner
@@ -15,13 +14,12 @@ import malpy.runner
 def main():
     """
     main runner
-    :return:
+    :return: None
     """
     parser = malpy.parser.Parser()
     runner = malpy.runner.Runner()
     for arg in sys.argv[1:]:
-        memory = list(range(64))
-        shuffle(memory)
+        memory = [0]*64
         token_ast = parser.parse(open(arg).read())
         print(token_ast)
         if not any([token[0] == 'E' for token in token_ast]):
