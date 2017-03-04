@@ -121,7 +121,7 @@ class TestMalActionRunner(object):
         assert_equal(len(mem), 64)
         assert_equal(mem, [0]*64)
 
-        beq_works = PARSER.parse("BEQ R1, R0, L1\nEND\n")
+        beq_works = PARSER.parse("BEQ R1, R0, L0\nEND\n")
         RUNNER.reset()
         mem = RUNNER.run(beq_works, [0] * 64)
         assert_equal(len(mem), 64)
