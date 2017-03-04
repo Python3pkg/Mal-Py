@@ -115,8 +115,14 @@ class TestMalActionRunner(object):
         assert_equal(len(mem), 64)
         assert_equal(mem, [0]*64)
 
-        blt_works = PARSER.parse("MOVEI V63, R0\nBGT R1, R0, L1\nEND\n")
+        blt_works = PARSER.parse("MOVEI V63, R0\nBLT R1, R0, L1\nEND\n")
         RUNNER.reset()
         mem = RUNNER.run(blt_works, [0] * 64)
+        assert_equal(len(mem), 64)
+        assert_equal(mem, [0]*64)
+
+        beq_works = PARSER.parse("BEQ R1, R0, L1\nEND\n")
+        RUNNER.reset()
+        mem = RUNNER.run(beq_works, [0] * 64)
         assert_equal(len(mem), 64)
         assert_equal(mem, [0]*64)
