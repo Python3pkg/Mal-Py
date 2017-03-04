@@ -191,7 +191,7 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             reg2 = int(ops[2][1:], 16)
-            if reg1 == 0:
+            if self.registers[reg1] == 0:
                 self.flags.div_by_zero = True
                 return  # Don't do division if reg1 is 0.
             self.actions.get('ADD', no_op)([('REG', reg0),

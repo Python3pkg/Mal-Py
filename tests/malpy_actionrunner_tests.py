@@ -53,7 +53,6 @@ class TestMalActionRunner(object):
         """
 
         good_instrs = PARSER.parse(
-                "MOVEI V63, R0\n"
                 "LOAD R1, R0\n"
                 "STORE R1, R0\n"
                 "MOVE R1, R0\n"
@@ -61,6 +60,7 @@ class TestMalActionRunner(object):
                 "INC R2\n"
                 "SUB R2, R1, R0\n"
                 "DEC R2\n"
+                "MOVEI V63, R1\n"
                 "MUL R2, R1, R0\n"
                 "DIV R2, R1, R0\n"
                 "BLT R2, R1, L13\n"
@@ -97,4 +97,26 @@ class TestMalActionRunner(object):
             assert_equal(len(mem), 3)
             assert_equal(mem, [False, False, True])
 
+        out_of_bounds = PARSER.parse("BR L2\nEND\n")
+        RUNNER.reset()
+        mem = RUNNER.run(out_of_bounds, [0]*64)
+        assert_equal(len(mem), 3)
+        assert_equal(mem, [False, True, False])
 
+        div_by_zero = PARSER.parse("DIV R2, R1, R0\nEND\n")
+        RUNNER.reset()
+        mem = RUNNER.run(div_by_zero, [0] * 64)
+        assert_equal(len(mem), 3)
+        assert_equal(mem, [True, False, False])
+
+        bgt_works = PARSER.parse("MOVEI V63, R1\nBGT R1, R0, L1\nEND\n")
+        RUNNER.reset()
+        mem = RUNNER.run(bgt_works, [0] * 64)
+        assert_equal(len(mem), 64)
+        assert_equal(mem, [0]*64)
+
+        blt_works = PARSER.parse("MOVEI V63, R0\nBGT R1, R0, L1\nEND\n")
+        RUNNER.reset()
+        mem = RUNNER.run(blt_works, [0] * 64)
+        assert_equal(len(mem), 64)
+        assert_equal(mem, [0]*64)
