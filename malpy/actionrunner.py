@@ -5,8 +5,7 @@ Mal Runtime environment with JIT Actions.
 from __future__ import print_function
 from recordclass import recordclass
 
-FLAGS = recordclass('RunnerFlags',
-                    'halt div_by_zero out_of_bounds bad_operand')
+FLAGS = recordclass('FLAGS', 'div_by_zero out_of_bounds bad_operand')
 
 
 def no_op(_):
@@ -27,7 +26,8 @@ class ActionRunner(object):
     def __init__(self, actions):
         self.actions = actions
         self.memory = None
-        self.flags = FLAGS(False, False, False, False)
+        self.halt = False
+        self.flags = FLAGS(False, False, False)
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
         self.evaluate = {
@@ -66,7 +66,7 @@ class ActionRunner(object):
         :return: Memory contents
         """
         self.memory = memory
-        while not any([self.flags.halt, self.flags.div_by_zero,
+        while not any([self.halt, self.flags.div_by_zero,
                        self.flags.out_of_bounds, self.flags.bad_operand]):
             if self.program_counter >= len(program):
                 self.flags.out_of_bounds = True
@@ -75,14 +75,10 @@ class ActionRunner(object):
                 self.evaluate[opcode](operands)
                 self.program_counter += 1
 
-        if not any([self.flags.div_by_zero,
-                    self.flags.out_of_bounds,
-                    self.flags.bad_operand]):
+        if not any(self.flags):
             return self.memory
         else:
-            return [self.flags.div_by_zero,
-                    self.flags.out_of_bounds,
-                    self.flags.bad_operand]
+            return self.flags
 
     def _move(self, ops):
         if ops[0].startswith('R') and ops[1].startswith('R'):
@@ -140,6 +136,7 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:])
             self.actions.get('REG', no_op)([('REG', reg0)])
             self.registers[reg0] += 1
+            self.registers[reg0] %= 64
         else:
             self.flags.bad_operand = True
 
@@ -162,7 +159,8 @@ class ActionRunner(object):
         if ops[0].startswith('R'):
             reg0 = int(ops[0][1:])
             self.actions.get('REG', no_op)([('REG', reg0)])
-            self.registers[reg0] -= 1
+            self.registers[reg0] += 63
+            self.registers[reg0] %= 64
         else:
             self.flags.bad_operand = True
 
@@ -253,4 +251,4 @@ class ActionRunner(object):
             self.flags.bad_operand = True
 
     def _end(self, _):
-        self.flags.halt = True
+        self.halt = True

@@ -27,7 +27,8 @@ config = {
             'malpy = malpy.__main__:main'
         ]
     },
-    'packages': find_packages()
+    'packages': ['malpy'],
+    'install_requires': ['recordclass']
 }
 
 setup(**config)

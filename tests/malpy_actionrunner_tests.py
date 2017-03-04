@@ -73,22 +73,22 @@ class TestMalActionRunner(object):
         assert_equal(len(mem), 64)
         assert_equal(mem, [0]*64)
 
-        bad_instrs = ("MOVEI V63, V63\n"
-                      "LOAD V63, V63\n"
-                      "STORE V63, V63\n"
-                      "MOVE V63, V63\n"
-                      "ADD V63, V63, V63\n"
-                      "INC V63\n"
-                      "SUB V63, V63, V63\n"
-                      "DEC V63\n"
-                      "MUL V63, V63, V63\n"
-                      "DIV V63, V63, V63\n"
-                      "BLT V63, V63, V63\n"
-                      "BGT V63, V63, V63\n"
-                      "BEQ V63, V63, V63\n"
-                      "BR V63\n").split('\n')
+        bad_operands = ("MOVEI V63, V63\n"
+                        "LOAD V63, V63\n"
+                        "STORE V63, V63\n"
+                        "MOVE V63, V63\n"
+                        "ADD V63, V63, V63\n"
+                        "INC V63\n"
+                        "SUB V63, V63, V63\n"
+                        "DEC V63\n"
+                        "MUL V63, V63, V63\n"
+                        "DIV V63, V63, V63\n"
+                        "BLT V63, V63, V63\n"
+                        "BGT V63, V63, V63\n"
+                        "BEQ V63, V63, V63\n"
+                        "BR V63\n").split('\n')
 
-        for bad_instr in bad_instrs:
+        for bad_instr in bad_operands:
             prog = bad_instr+"\nEND\n"
             bad_ast = PARSER.parse(prog)
             print(prog, bad_ast)
