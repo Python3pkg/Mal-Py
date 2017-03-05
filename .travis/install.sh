@@ -4,10 +4,6 @@ set -x
 
 if [[ "$(uname -s)" == 'Darwin' ]]; then
     sw_vers
-    brew update || brew update
-
-    # install pyenv
-    brew install pyenv
     pyenv update
     PYENV_ROOT="$HOME/.pyenv"
     PATH="$PYENV_ROOT/bin:$PATH"
@@ -55,10 +51,10 @@ else
     # container infra is upgraded
     if [[ "${TOXENV}" = pypy* ]]; then
         curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
-        pyenv update
         PYENV_ROOT="$HOME/.pyenv"
         PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
+        pyenv update
         pyenv install "pypy-$PYPY_VERSION"
         pyenv global "pypy-$PYPY_VERSION"
     fi
