@@ -8,4 +8,7 @@ A special thanks to `pyca/cryptography`_ for their ideas on travis integration
 with pyenv, tox, and osx. Much of the meta build system and testing scaffolding
 is based significantly off of theirs.
 
-.. _`pyca/crptography` https://github.com/pyca/cryptography
+Further API documentation can be found at `documentation`_
+
+.. _`pyca/cryptography`: https://github.com/pyca/cryptography
+.. _`documentation`: https://mal-py.readthedocs.io
