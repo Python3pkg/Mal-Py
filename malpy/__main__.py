@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-"""
-The Mal Language Parser and Runtime Enviroment main runner
+"""The Mal Language Parser and Runtime Environment main script
+
 """
 from __future__ import print_function
+
 import sys
 
 import malpy.parser
@@ -12,9 +13,11 @@ import malpy.runner
 
 
 def main():
-    """
-    main runner
-    :return: None
+    """main runner
+
+    return:
+        None
+
     """
     parser = malpy.parser.Parser()
     runner = malpy.runner.Runner()

@@ -3,10 +3,11 @@
 malpy.actionrunner.ActionRunner Tests
 """
 from __future__ import print_function
+
 from nose.tools import assert_equal
 
-import malpy.runner
 import malpy.parser
+import malpy.runner
 
 operand_counts = {
     'END': 0,
@@ -49,7 +50,7 @@ class TestMalActionRunner(object):
     def test_run(self):
         """
         validate runner works proper with no JIT actions
-        :return: None 
+        :return: None
         """
 
         good_instrs = PARSER.parse(

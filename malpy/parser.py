@@ -1,19 +1,20 @@
 # coding=utf-8
+"""Mal assembler.
+
 """
-Mal assembler.
-"""
-import re
 import collections
+import re
 
 Token = collections.namedtuple('Token', ['type', 'value'])
 
 
 class Parser(object):
-    """
-    Implementation of a recursive descent parser.1
+    """Implementation of a recursive descent parser.
+
     Each method implement a single grammar rule.
     It walks from left to right over grammar rule.
     It will either consume the rule or generate a syntax error.
+
     """
 
     def __init__(self):
@@ -52,20 +53,28 @@ class Parser(object):
         }
 
     def generate_tokens(self, text):
-        """
-        String-to-token generator.
-        :param text: Input string of lines that are \n delimited
-        :return: a generated token list
+        """String-to-token generator.
+
+        Args:
+            text (str): Input string of lines that are newline delimited
+
+        Returns:
+            list[Token]: a generated token list.
+
         """
         for token in self.scanner.scan(text)[0]:
             if token.type != 'WS':
                 yield token
 
     def parse(self, text):
-        """
-        Parses a text string into a the MAL ast.
-        :param text: The text to parse
-        :return: A mult-level array representing the Assembly 'AST'
+        """Parses a text string into a the MAL ast.
+
+        Args:
+            text: The text to parse
+
+        Returns:
+             list[list[str, list[str]]]: An array representing the 'AST'.
+
         """
         self.tokens = self.generate_tokens(text)
         self.current_token = None

@@ -1,4 +1,3 @@
 # coding=utf-8
-"""
-The Mal Language Parser and Runtime Enviroment
+"""The Mal Language Parser and Runtime Environment
 """

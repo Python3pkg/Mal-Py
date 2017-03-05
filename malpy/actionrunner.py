@@ -1,33 +1,44 @@
 # coding=utf-8
-"""
-Mal Runtime environment with JIT Actions.
+"""Mal Runtime environment with JIT Actions.
+
 """
 from __future__ import print_function
-from recordclass import recordclass
 
-FLAGS = recordclass('FLAGS', 'div_by_zero out_of_bounds bad_operand')
+
+class Flags(object):
+    """Small mutable flag class
+
+    """
+    def __init__(self, div_by_zero, out_of_bounds, bad_operand):
+        self.div_by_zero = div_by_zero
+        self.out_of_bounds = out_of_bounds
+        self.bad_operand = bad_operand
 
 
 def no_op(_):
-    """
-    Non-operation.
+    """Non-operation.
+
     Does nothing for when no jit is needed or found.
-    :return: None
+
+    Returns:
+        None
+
     """
     pass
 
 
 class ActionRunner(object):
-    """
-    This is a runtime environment.
+    """This is a runtime environment.
+
     It sets memory on instantiation and zeros the registers.
+
     """
 
     def __init__(self, actions):
         self.actions = actions
         self.memory = None
         self.halt = False
-        self.flags = FLAGS(False, False, False)
+        self.flags = Flags(False, False, False)
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
         self.evaluate = {
@@ -49,22 +60,26 @@ class ActionRunner(object):
         }
 
     def reset(self):
-        """
-        Resets the memory, registers and program counter.
+        """Resets the memory, registers and program counter.
+
         """
         self.memory = None
-        self.flags = FLAGS(False, False, False)
+        self.flags = Flags(False, False, False)
         self.halt = False
         self.registers = [0 for _ in range(16)]
         self.program_counter = 0
 
     def run(self, program, memory):
-        """
-        Runs an instruction set on a loaded memory and cleared register
-        :param program: Either the instruction list or text.
-                        It will be parsed if it is text.
-        :param memory: The memory contents on which to run the program.
-        :return: Memory contents
+        """Runs an instruction set on a loaded memory and cleared register
+
+        Args:
+            program (list[list[str, list[str]]]): Instruction 'AST'.
+
+            memory (list[int]): The memory contents used to run the program.
+
+        Returns:
+             list[int]: The memory contents
+
         """
         self.memory = memory
         while not any([self.halt, self.flags.div_by_zero,

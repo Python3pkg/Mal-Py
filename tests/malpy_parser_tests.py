@@ -3,6 +3,7 @@
 malpy.parser.Parser Tests
 """
 from __future__ import print_function
+
 from nose.tools import assert_equal
 
 import malpy.parser
@@ -123,7 +124,8 @@ class TestMalParser(object):
         assert_equal(test_err001, ['ERR:001:Newline'])
 
         test_err001_while = PARSER.parse("MOVEI V63, R0\nMOVEI V63, R0")
-        assert_equal(test_err001_while, [['MOVEI', ['V63', 'R0']], 'ERR:001:Newline'])
+        assert_equal(test_err001_while, [['MOVEI', ['V63', 'R0']],
+                                         'ERR:001:Newline'])
 
         test_err002 = PARSER.parse("MOVEI Ra\n")
         assert_equal(test_err002, ['ERR:002:Invalid operand count'])
