@@ -4,6 +4,7 @@ set -x
 
 if [[ "$(uname -s)" == 'Darwin' ]]; then
     sw_vers
+    brew update && brew upgrade pyenv
     PYENV_ROOT="$HOME/.pyenv"
     PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
