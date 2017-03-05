@@ -1,6 +1,14 @@
 Mal-Py main package: `malpy`
 ============================
 
+Module contents
+---------------
+
+.. automodule:: malpy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -27,11 +35,3 @@ malpy.runner module
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: malpy
-    :members:
-    :undoc-members:
-    :show-inheritance:
