@@ -64,9 +64,9 @@ class TestMalActionRunner(object):
                 "MOVEI V63, R1\n"
                 "MUL R2, R1, R0\n"
                 "DIV R2, R1, R0\n"
-                "BLT R2, R1, L13\n"
-                "BGT R2, R1, L13\n"
-                "BEQ R2, R1, L13\n"
+                "BLT R2, R1, L14\n"
+                "BGT R2, R1, L14\n"
+                "BEQ R2, R1, L14\n"
                 "BR L3\n"
                 "END\n "
         )
@@ -110,19 +110,19 @@ class TestMalActionRunner(object):
         assert_equal(len(mem), 3)
         assert_equal(mem, [True, False, False])
 
-        bgt_works = PARSER.parse("MOVEI V63, R1\nBGT R1, R0, L1\nEND\n")
+        bgt_works = PARSER.parse("MOVEI V63, R1\nBGT R1, R0, L2\nEND\n")
         RUNNER.reset()
         mem = RUNNER.run(bgt_works, [0] * 64)
         assert_equal(len(mem), 64)
         assert_equal(mem, [0]*64)
 
-        blt_works = PARSER.parse("MOVEI V63, R0\nBLT R1, R0, L1\nEND\n")
+        blt_works = PARSER.parse("MOVEI V63, R0\nBLT R1, R0, L2\nEND\n")
         RUNNER.reset()
         mem = RUNNER.run(blt_works, [0] * 64)
         assert_equal(len(mem), 64)
         assert_equal(mem, [0]*64)
 
-        beq_works = PARSER.parse("BEQ R1, R0, L0\nEND\n")
+        beq_works = PARSER.parse("BEQ R1, R0, L1\nEND\n")
         RUNNER.reset()
         mem = RUNNER.run(beq_works, [0] * 64)
         assert_equal(len(mem), 64)

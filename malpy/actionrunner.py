@@ -104,7 +104,7 @@ class ActionRunner(object):
         if ops[0].startswith('R') and ops[1].startswith('R'):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
-            self.actions.get('MOVE', no_op)([('REG', reg0), ('REG', reg1)])
+            self.actions.get('MOVE', no_op)([reg0, reg1])
             self.registers[reg1] = self.registers[reg0]
         else:
             self.flags.bad_operand = True
@@ -113,7 +113,7 @@ class ActionRunner(object):
         if ops[0].startswith('V') and ops[1].startswith('R'):
             val0 = int(ops[0][1:])
             reg1 = int(ops[1][1:], 16)
-            self.actions.get('MOVEI', no_op)([('VAL', val0), ('REG', reg1)])
+            self.actions.get('MOVEI', no_op)([val0, reg1])
             self.registers[reg1] = val0
         else:
             self.flags.bad_operand = True
@@ -122,7 +122,7 @@ class ActionRunner(object):
         if ops[0].startswith('R') and ops[1].startswith('R'):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
-            self.actions.get('LOAD', no_op)([('REG', reg0), ('REG', reg1)])
+            self.actions.get('LOAD', no_op)([reg0, reg1])
             self.registers[reg1] = self.memory[self.registers[reg0]]
         else:
             self.flags.bad_operand = True
@@ -131,7 +131,7 @@ class ActionRunner(object):
         if ops[0].startswith('R') and ops[1].startswith('R'):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
-            self.actions.get('STORE', no_op)([('REG', reg0), ('REG', reg1)])
+            self.actions.get('STORE', no_op)([reg0, reg1])
             self.memory[self.registers[reg1]] = self.registers[reg0]
         else:
             self.flags.bad_operand = True
@@ -143,9 +143,7 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             reg2 = int(ops[2][1:], 16)
-            self.actions.get('ADD', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('REG', reg2)])
+            self.actions.get('ADD', no_op)([reg0, reg1, reg2])
             self.registers[reg2] = (self.registers[reg0]
                                     + self.registers[reg1]) % 64
         else:
@@ -154,7 +152,7 @@ class ActionRunner(object):
     def _inc(self, ops):
         if ops[0].startswith('R'):
             reg0 = int(ops[0][1:])
-            self.actions.get('REG', no_op)([('REG', reg0)])
+            self.actions.get('REG', no_op)([reg0])
             self.registers[reg0] += 1
             self.registers[reg0] %= 64
         else:
@@ -167,9 +165,7 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             reg2 = int(ops[2][1:], 16)
-            self.actions.get('SUB', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('REG', reg2)])
+            self.actions.get('SUB', no_op)([reg0, reg1, reg2])
             self.registers[reg2] = (self.registers[reg0]
                                     - self.registers[reg1]) % 64
         else:
@@ -178,7 +174,7 @@ class ActionRunner(object):
     def _dec(self, ops):
         if ops[0].startswith('R'):
             reg0 = int(ops[0][1:])
-            self.actions.get('REG', no_op)([('REG', reg0)])
+            self.actions.get('REG', no_op)([reg0])
             self.registers[reg0] += 63
             self.registers[reg0] %= 64
         else:
@@ -191,9 +187,7 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             reg2 = int(ops[2][1:], 16)
-            self.actions.get('MUL', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('REG', reg2)])
+            self.actions.get('MUL', no_op)([reg0, reg1, reg2])
             self.registers[reg2] = (self.registers[reg0]
                                     * self.registers[reg1]) % 64
         else:
@@ -209,11 +203,9 @@ class ActionRunner(object):
             if self.registers[reg1] == 0:
                 self.flags.div_by_zero = True
                 return  # Don't do division if reg1 is 0.
-            self.actions.get('ADD', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('REG', reg2)])
+            self.actions.get('DIV', no_op)([reg0, reg1, reg2])
             self.registers[reg2] = (self.registers[reg0]
-                                    + self.registers[reg1]) % 64
+                                    // self.registers[reg1]) % 64
         else:
             self.flags.bad_operand = True
 
@@ -224,11 +216,9 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             lbl2 = int(ops[2][1:])
-            self.actions.get('BGT', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('LINE', lbl2)])
+            self.actions.get('BGT', no_op)([reg0, reg1, lbl2])
             if self.registers[reg0] > self.registers[reg1]:
-                self.program_counter = lbl2
+                self.program_counter = lbl2 - 1
         else:
             self.flags.bad_operand = True
 
@@ -239,11 +229,9 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             lbl2 = int(ops[2][1:])
-            self.actions.get('BGT', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('LINE', lbl2)])
+            self.actions.get('BGT', no_op)([reg0, reg1, lbl2])
             if self.registers[reg0] < self.registers[reg1]:
-                self.program_counter = lbl2
+                self.program_counter = lbl2 - 1
         else:
             self.flags.bad_operand = True
 
@@ -254,18 +242,16 @@ class ActionRunner(object):
             reg0 = int(ops[0][1:], 16)
             reg1 = int(ops[1][1:], 16)
             lbl2 = int(ops[2][1:])
-            self.actions.get('BGT', no_op)([('REG', reg0),
-                                            ('REG', reg1),
-                                            ('LINE', lbl2)])
+            self.actions.get('BGT', no_op)([reg0, reg1, lbl2])
             if self.registers[reg0] == self.registers[reg1]:
-                self.program_counter = lbl2
+                self.program_counter = lbl2 - 1
         else:
             self.flags.bad_operand = True
 
     def _br(self, ops):
         if ops[0].startswith('L'):
             lbl0 = int(ops[0][1:])
-            self.actions.get('BR', no_op)([('LINE', lbl0)])
+            self.actions.get('BR', no_op)([lbl0])
             self.program_counter = lbl0
         else:
             self.flags.bad_operand = True
