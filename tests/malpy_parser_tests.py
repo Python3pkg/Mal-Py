@@ -1,6 +1,6 @@
 # coding=utf-8
-"""
-malpy.parser.Parser Tests
+"""malpy.parser.Parser Tests
+
 """
 from __future__ import print_function
 
@@ -31,13 +31,14 @@ operand_counts = {
 
 
 class TestMalParser(object):
-    """
-    Tests the parser class for consistency in the public facing API.
+    """Tests the parser class for consistency in the public facing API.
+
     """
     def test_generate_tokens(self):
-        """
-        Makes sure token generator yields proper tokens.
-        :return: None
+        """Makes sure token generator yields proper tokens.
+
+            Returns: None
+
         """
 
         ##

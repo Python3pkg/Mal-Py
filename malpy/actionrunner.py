@@ -63,7 +63,7 @@ class ActionRunner(object):
         """Resets the memory, registers and program counter.
 
         """
-        self.memory = None
+        self.memory = [0]*64
         self.flags = Flags(False, False, False)
         self.halt = False
         self.registers = [0 for _ in range(16)]
@@ -252,7 +252,7 @@ class ActionRunner(object):
         if ops[0].startswith('L'):
             lbl0 = int(ops[0][1:])
             self.actions.get('BR', no_op)([lbl0])
-            self.program_counter = lbl0
+            self.program_counter = lbl0 - 1
         else:
             self.flags.bad_operand = True
 

@@ -33,13 +33,14 @@ RUNNER = malpy.runner.Runner()
 
 
 class TestMalActionRunner(object):
-    """
-    Tests the action runner class for consistency in the public facing API.
+    """Tests the action runner class for consistency in the public facing API.
+
     """
     def test_reset(self):
-        """
-        validate reset works properly.
-        :return: None
+        """validate reset works properly.
+
+            Returns: None
+
         """
         test_program = PARSER.parse("MOVEI V63, R0\nEND\n")
         RUNNER.run(test_program, [0] * 64)
@@ -48,9 +49,10 @@ class TestMalActionRunner(object):
         assert_equal(RUNNER.registers[0], 0)
 
     def test_run(self):
-        """
-        validate runner works proper with no JIT actions
-        :return: None
+        """validate runner works proper with no JIT actions
+
+            Returns: None
+
         """
 
         good_instrs = PARSER.parse(

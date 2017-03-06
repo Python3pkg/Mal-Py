@@ -13,4 +13,3 @@ class Runner(malpy.actionrunner.ActionRunner):
     """
     def __init__(self):
         super(Runner, self).__init__(dict([]))
-

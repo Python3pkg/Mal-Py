@@ -7,8 +7,6 @@ import uuid
 import malpy.actionrunner
 
 
-
-
 class CycleAnalyzer(malpy.actionrunner.ActionRunner):
     """ This is a runtime memory profiler and analyzer.
 
@@ -76,7 +74,7 @@ class CycleAnalyzer(malpy.actionrunner.ActionRunner):
         self.states = {}
 
     def _zobrist(self, changes, old):
-        for idx, change in changes.items()+old.items():
+        for idx, change in list(changes.items())+list(old.items()):
             self.curr_state ^= self.state_table[64*idx+change]
 
     def reset(self):
@@ -87,7 +85,6 @@ class CycleAnalyzer(malpy.actionrunner.ActionRunner):
         self.cycle = False
         self.curr_state = 0
         changes = self.memory + self.registers
-        self.curr_state = 0
         self._zobrist(dict(enumerate(changes)), {})
         self.states = {}
 

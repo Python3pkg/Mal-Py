@@ -8,8 +8,8 @@ from __future__ import print_function
 
 import sys
 
+import malpy.cycleanalyzer
 import malpy.parser
-import malpy.runner
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
 
     """
     parser = malpy.parser.Parser()
-    runner = malpy.runner.Runner()
+    runner = malpy.cycleanalyzer.CycleAnalyzer()
     for arg in sys.argv[1:]:
         memory = [0]*64
         token_ast = parser.parse(open(arg).read())
