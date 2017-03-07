@@ -45,7 +45,7 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
             ;;
     esac
     pyenv rehash
-    python -m pip install --user virtualenv
+    python -m pip install --user virtualenv coverage
 else
     # temporary pyenv installation to get latest pypy until the travis
     # container infra is upgraded
@@ -58,7 +58,7 @@ else
         pyenv install "pypy-$PYPY_VERSION"
         pyenv global "pypy-$PYPY_VERSION"
     fi
-    pip install virtualenv
+    pip install virtualenv coverage
 fi
 
 python -m virtualenv ~/.venv
