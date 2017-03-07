@@ -9,7 +9,6 @@ case "${TOXENV}" in
     py3pep8);;
     docs);;
     *)
-        source ~/.venv/bin/activate
-        codecov --env TRAVIS_OS_NAME,TOXENV
+        bash <(curl -s https://codecov.io/bash) -e TRAVIS_OS_NAME,TOXENV
         ;;
 esac
