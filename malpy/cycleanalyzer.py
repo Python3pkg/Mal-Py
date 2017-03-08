@@ -109,7 +109,7 @@ class CycleAnalyzer(malpy.actionrunner.ActionRunner):
                 self.flags.out_of_bounds = True
             else:
                 opcode, operands = program[self.program_counter]
-                self.evaluate[opcode](operands)
+                self._create_operation(opcode)(operands)
                 if self.program_counter \
                         in self.states.get(self.curr_state, []):
                     print(self.states)

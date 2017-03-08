@@ -44,7 +44,7 @@ class TestMalActionRunner(object):
         """
         test_program = PARSER.parse("MOVEI V63, R0\nEND\n")
         RUNNER.run(test_program, [0] * 64)
-        assert_equal(RUNNER.registers[0], 63)
+        assert_equal(RUNNER.registers[0], 63, str(RUNNER.flags))
         RUNNER.reset()
         assert_equal(RUNNER.registers[0], 0)
 

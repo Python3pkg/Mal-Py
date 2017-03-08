@@ -68,14 +68,6 @@ class TestMalParser(object):
             assert_equal(list(test_val), [Token('VAL', val)])
 
         ##
-        # MEM Tokens
-        ##
-        for i in range(64):
-            mem = "M{0:02d}".format(i)
-            test_mem = PARSER.generate_tokens(mem)
-            assert_equal(list(test_mem), [Token('MEM', mem)])
-
-        ##
         # REG Tokens
         ##
         for i in range(10):

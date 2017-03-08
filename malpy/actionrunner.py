@@ -14,6 +14,10 @@ class Flags(object):
         self.out_of_bounds = out_of_bounds
         self.bad_operand = bad_operand
 
+    def __str__(self):
+        return "FLAGS(div_by_zero={0}, out_of_bounds={1}, bad_operand={2})"\
+            .format(self.div_by_zero, self.out_of_bounds, self.bad_operand)
+
 
 def no_op(_):
     """Non-operation.
@@ -58,6 +62,42 @@ class ActionRunner(object):
             'BR': self._br,
             'END': self._end
         }
+        self.types = {
+            'END': [],
+            'BR': ['L'],
+            'INC': ['R'],
+            'DEC': ['R'],
+            'MOVE': ['R', 'R'],
+            'MOVEI': ['V', 'R'],
+            'LOAD': ['R', 'R'],
+            'STORE': ['R', 'R'],
+            'ADD': ['R', 'R', 'R'],
+            'SUB': ['R', 'R', 'R'],
+            'MUL': ['R', 'R', 'R'],
+            'DIV': ['R', 'R', 'R'],
+            'BEQ': ['R', 'R', 'L'],
+            'BLT': ['R', 'R', 'L'],
+            'BGT': ['R', 'R', 'L']
+        }
+
+    def _from_hex(self, reg):
+        return int(reg[1:], 16)
+
+    def _from_dec(self, val):
+        return int(val[1:])
+
+    def _create_operation(self, opcode):
+        def _function(operands):
+            ots = zip(operands, self.types[opcode])
+            if all([op.startswith(typ) for op, typ in ots]):
+                ops = [self._from_hex(op)
+                       if op[0] == 'R' else self._from_dec(op)
+                       for op in operands]
+                self.actions.get(opcode, no_op)(ops)
+                self.evaluate[opcode](ops)
+            else:
+                self.flags.bad_operand = True
+        return _function
 
     def reset(self):
         """Resets the memory, registers and program counter.
@@ -66,7 +106,7 @@ class ActionRunner(object):
         self.memory = [0]*64
         self.flags = Flags(False, False, False)
         self.halt = False
-        self.registers = [0 for _ in range(16)]
+        self.registers = [0]*16
         self.program_counter = 0
 
     def run(self, program, memory):
@@ -88,7 +128,7 @@ class ActionRunner(object):
                 self.flags.out_of_bounds = True
             else:
                 opcode, operands = program[self.program_counter]
-                self.evaluate[opcode](operands)
+                self._create_operation(opcode)(operands)
                 self.program_counter += 1
 
         if not any([self.flags.div_by_zero,
@@ -101,160 +141,58 @@ class ActionRunner(object):
                     self.flags.bad_operand]
 
     def _move(self, ops):
-        if ops[0].startswith('R') and ops[1].startswith('R'):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            self.actions.get('MOVE', no_op)([reg0, reg1])
-            self.registers[reg1] = self.registers[reg0]
-        else:
-            self.flags.bad_operand = True
+            self.registers[ops[1]] = self.registers[ops[0]]
 
     def _movei(self, ops):
-        if ops[0].startswith('V') and ops[1].startswith('R'):
-            val0 = int(ops[0][1:])
-            reg1 = int(ops[1][1:], 16)
-            self.actions.get('MOVEI', no_op)([val0, reg1])
-            self.registers[reg1] = val0
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[1]] = ops[0]
 
     def _load(self, ops):
-        if ops[0].startswith('R') and ops[1].startswith('R'):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            self.actions.get('LOAD', no_op)([reg0, reg1])
-            self.registers[reg1] = self.memory[self.registers[reg0]]
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[1]] = self.memory[self.registers[ops[0]]]
 
     def _store(self, ops):
-        if ops[0].startswith('R') and ops[1].startswith('R'):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            self.actions.get('STORE', no_op)([reg0, reg1])
-            self.memory[self.registers[reg1]] = self.registers[reg0]
-        else:
-            self.flags.bad_operand = True
+        self.memory[self.registers[ops[1]]] = self.registers[ops[0]]
 
     def _add(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('R'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            reg2 = int(ops[2][1:], 16)
-            self.actions.get('ADD', no_op)([reg0, reg1, reg2])
-            self.registers[reg2] = (self.registers[reg0]
-                                    + self.registers[reg1]) % 64
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[2]] = \
+            (self.registers[ops[0]] + self.registers[ops[1]]) % 64
 
     def _inc(self, ops):
-        if ops[0].startswith('R'):
-            reg0 = int(ops[0][1:])
-            self.actions.get('REG', no_op)([reg0])
-            self.registers[reg0] += 1
-            self.registers[reg0] %= 64
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[0]] = (self.registers[ops[0]] + 1) % 64
 
     def _sub(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('R'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            reg2 = int(ops[2][1:], 16)
-            self.actions.get('SUB', no_op)([reg0, reg1, reg2])
-            self.registers[reg2] = (self.registers[reg0]
-                                    - self.registers[reg1]) % 64
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[2]] = \
+            (self.registers[ops[2]] + 64 - self.registers[ops[1]]) % 64
 
     def _dec(self, ops):
-        if ops[0].startswith('R'):
-            reg0 = int(ops[0][1:])
-            self.actions.get('REG', no_op)([reg0])
-            self.registers[reg0] += 63
-            self.registers[reg0] %= 64
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[0]] = (self.registers[ops[0]] + 63) % 64
 
     def _mul(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('R'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            reg2 = int(ops[2][1:], 16)
-            self.actions.get('MUL', no_op)([reg0, reg1, reg2])
-            self.registers[reg2] = (self.registers[reg0]
-                                    * self.registers[reg1]) % 64
-        else:
-            self.flags.bad_operand = True
+        self.registers[ops[2]] = \
+            (self.registers[ops[0]] * self.registers[ops[1]]) % 64
 
     def _div(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('R'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            reg2 = int(ops[2][1:], 16)
-            if self.registers[reg1] == 0:
-                self.flags.div_by_zero = True
-                return  # Don't do division if reg1 is 0.
-            self.actions.get('DIV', no_op)([reg0, reg1, reg2])
-            self.registers[reg2] = (self.registers[reg0]
-                                    // self.registers[reg1]) % 64
-        else:
-            self.flags.bad_operand = True
+        if self.registers[ops[1]] == 0:
+            self.flags.div_by_zero = True
+            return  # Don't do division if reg1 is 0.
+        self.registers[ops[2]] = \
+            (self.registers[ops[0]] // self.registers[ops[1]]) % 64
 
     def _bgt(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('L'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            lbl2 = int(ops[2][1:])
-            self.actions.get('BGT', no_op)([reg0, reg1, lbl2])
-            if self.registers[reg0] > self.registers[reg1]:
-                self.program_counter = lbl2 - 1
-        else:
-            self.flags.bad_operand = True
+        if self.registers[ops[0]] > self.registers[ops[1]]:
+            self.program_counter = ops[2] - 1
 
     def _blt(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('L'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            lbl2 = int(ops[2][1:])
-            self.actions.get('BGT', no_op)([reg0, reg1, lbl2])
-            if self.registers[reg0] < self.registers[reg1]:
-                self.program_counter = lbl2 - 1
-        else:
-            self.flags.bad_operand = True
+        if self.registers[ops[0]] < self.registers[ops[1]]:
+            self.program_counter = ops[2] - 1
 
     def _beq(self, ops):
-        if all((ops[0].startswith('R'),
-                ops[1].startswith('R'),
-                ops[2].startswith('L'))):
-            reg0 = int(ops[0][1:], 16)
-            reg1 = int(ops[1][1:], 16)
-            lbl2 = int(ops[2][1:])
-            self.actions.get('BGT', no_op)([reg0, reg1, lbl2])
-            if self.registers[reg0] == self.registers[reg1]:
-                self.program_counter = lbl2 - 1
+        if self.registers[ops[0]] == self.registers[ops[1]]:
+            self.program_counter = ops[2] - 1
         else:
             self.flags.bad_operand = True
 
     def _br(self, ops):
-        if ops[0].startswith('L'):
-            lbl0 = int(ops[0][1:])
-            self.actions.get('BR', no_op)([lbl0])
-            self.program_counter = lbl0 - 1
-        else:
-            self.flags.bad_operand = True
+        self.program_counter = ops[0] - 1
 
     def _end(self, _):
         self.halt = True

@@ -21,7 +21,6 @@ class Parser(object):
         self.scanner = re.Scanner([
             (r"\n|\r\n|\r", lambda _, tok: Token('EOL', tok)),
             (r"V([0-5][0-9]|6[0-3])", lambda _, tok: Token('VAL', tok)),
-            (r"M([0-5][0-9]|6[0-3])", lambda _, tok: Token('MEM', tok)),
             (r"R[0-9a-f]", lambda _, tok: Token('REG', tok)),
             (r"L\d+", lambda _, tok: Token('LABEL', tok)),
             (r",", lambda _, tok: Token('COMMA', tok)),
@@ -153,7 +152,7 @@ class Parser(object):
             return None
 
     def _operand(self):
-        if (self._accept('REG') or self._accept('MEM') or
-                self._accept('LABEL') or self._accept('VAL')):
+        if (self._accept('REG') or self._accept('LABEL') or
+                self._accept('VAL')):
             return self.current_token.value
         return None
