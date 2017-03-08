@@ -100,21 +100,19 @@ class Parser(object):
 
     def _program(self):
         lines = []
+        lines += [self._line()]
+        while self.next_token and self.current_token:
+            lines += [self._line()]
+        return list(filter(None, lines))
+
+    def _line(self):
         line = self._instruction()
-        lines.append(line)
         # Don't replace other errors or valid lines
         if not self._accept('EOL') and line and line[0] != 'E':
-            lines[-1] = 'ERR:001:Newline'
             self._eat_to_eol()
-        while self.current_token and self.next_token:
-            line = self._instruction()
-            lines.append(line)
-            # Don't replace other errors or valid lines
-            if not self._accept('EOL')\
-                    and line and line[0] != 'E':
-                lines[-1] = 'ERR:001:Newline'
-                self._eat_to_eol()
-        return lines
+            return "ERR:001:Newline"
+        else:
+            return line
 
     def _instruction(self):
         operation_code = self._opcode()
@@ -123,25 +121,18 @@ class Parser(object):
             return 'ERR:003:Invalid mnemonic'
 
         operands = []
-        bad_operand = False
         operand = self._operand()
-        if operation_code != 'END' and not operand:
-            bad_operand = True
-        if operand:
-            operands.append(operand)
+        operands.append(operand)
         while self._accept('COMMA'):
             operand = self._operand()
-            if not operand:
-                bad_operand = True
             operands.append(operand)
 
-        if bad_operand:
-            self._eat_to_eol()
-            return 'ERR:004:Invalid operand'
+        operands = list(filter(None, operands))
 
-        if operation_code in self.operand_counts:
-            if len(operands) == self.operand_counts[operation_code]:
-                return [operation_code, operands]
+        if len(operands) == self.operand_counts[operation_code]:
+            return [operation_code, operands]
+        else:
+            self._eat_to_eol()
             return 'ERR:002:Invalid operand count'
         # return 'ERR:003:Invalid mnemonic' # Unreachable
 

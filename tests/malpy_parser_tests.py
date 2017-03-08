@@ -126,12 +126,6 @@ class TestMalParser(object):
         test_err003 = PARSER.parse("NOT_HERE\n")
         assert_equal(test_err003, ['ERR:003:Invalid mnemonic'])
 
-        test_err004 = PARSER.parse("MOVEI R0, NOT_HERE\n")
-        assert_equal(test_err004, ['ERR:004:Invalid operand'])
-
-        test_err004_first = PARSER.parse("MOVEI NOT_HERE, R0\n")
-        assert_equal(test_err004_first, ['ERR:004:Invalid operand'])
-
         instrs = "MOVEI LOAD STORE MOVE ADD INC SUB DEC MUL DIV BEQ " \
                  "BLT BGT BR END"
         prog = ""
