@@ -31,6 +31,7 @@ config = {
     'packages': ['malpy'],
     'install_requires': [],
     'tests_require': [
+        'pytest',
         'nose'
     ],
     'extras_require': {
