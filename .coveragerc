@@ -1,0 +1,11 @@
+[run]
+branch = True
+source =
+    malpy
+    tests/
+
+[paths]
+source =
+   src/malpy
+   .tox/*/lib/python*/site-packages/malpy
+   .tox/pypy/site-packages/malpy
