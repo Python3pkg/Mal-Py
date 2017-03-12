@@ -35,7 +35,7 @@ config = {
     ],
     'extras_require': {
         'test': [
-            'nose'
+            'pytest'
         ],
         'docstest': [
             'doc8',
