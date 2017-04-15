@@ -29,11 +29,7 @@ config = {
         ]
     },
     'packages': [
-        'malpy',
-    #     'malpy.parser',
-    #     'malpy.runner',
-    #     'malpy.cycleanalyzer',
-    #     'malpy.actionrunner'
+        'malpy'
     ],
     'install_requires': [],
     'tests_require': [
