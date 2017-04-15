@@ -15,7 +15,20 @@ source ~/.venv/bin/activate
 ###I/O files for testing
 # basic.mal -- run call testing
 cat << EOF > basic.mal
-MOVEI V00, R0
+LOAD R1, R0
+STORE R1, R0
+MOVE R1, R0
+ADD R2, R1, R0
+INC R2
+SUB R2, R1, R0,
+DEC R2
+MOVEI V63, R1
+MUL R2, R1, R0
+DIV R2, R1, R0
+BLT R2, R1, L14
+BGT R2, R1, L14
+BEQ R2, R1, L14
+BR L3
 END
 EOF
 

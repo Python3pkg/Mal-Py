@@ -9,4 +9,4 @@ It focuses on the principles of Assembly using a Von Neumann Architecture.
    :caption: Contents:
 
    malpy
-   modules
+

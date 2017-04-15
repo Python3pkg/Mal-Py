@@ -188,8 +188,6 @@ class ActionRunner(object):
     def _beq(self, ops):
         if self.registers[ops[0]] == self.registers[ops[1]]:
             self.program_counter = ops[2] - 1
-        else:
-            self.flags.bad_operand = True
 
     def _br(self, ops):
         self.program_counter = ops[0] - 1
