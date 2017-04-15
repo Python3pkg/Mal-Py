@@ -17,7 +17,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 config = {
     'url': 'https://github.com/LSmit202/Mal-Py',
     'name': 'malpy',
-    'version': '1.0.0',
+    'version': '1.0.0-patch1',
     'description': 'Minimal Assembly Language Virtual Machine',
     'long_description': long_dsecription,
     'author': 'Luke Smith',
@@ -28,7 +28,13 @@ config = {
             'malpy = malpy.__main__:main'
         ]
     },
-    'packages': ['malpy'],
+    'packages': [
+        'malpy',
+    #     'malpy.parser',
+    #     'malpy.runner',
+    #     'malpy.cycleanalyzer',
+    #     'malpy.actionrunner'
+    ],
     'install_requires': [],
     'tests_require': [
         'pytest',

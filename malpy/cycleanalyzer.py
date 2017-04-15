@@ -61,7 +61,7 @@ class CycleAnalyzer(malpy.actionrunner.ActionRunner):
                     {ops[2] + 64: (self.registers[ops[0]] //
                                    self.registers[ops[1]]) % 64},
                     {ops[2] + 64: self.registers[ops[2]]}
-                ) if ops[1] != 0 else self._zobrist({}, {}),
+                ) if self.registers[ops[1]] != 0 else self._zobrist({}, {}),
         }
 
         super(CycleAnalyzer, self).__init__(self.__jit)
