@@ -17,7 +17,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 config = {
     'url': 'https://github.com/LSmit202/Mal-Py',
     'name': 'malpy',
-    'version': '0.5.0',
+    'version': '1.0.0',
     'description': 'Minimal Assembly Language Virtual Machine',
     'long_description': long_dsecription,
     'author': 'Luke Smith',
