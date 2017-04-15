@@ -2,7 +2,6 @@
 branch = True
 source =
     malpy
-    tests/
 
 [paths]
 source =

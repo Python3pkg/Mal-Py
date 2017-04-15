@@ -11,4 +11,12 @@ if [[ "$(uname -s)" == "Darwin" || "${TOXENV}" == pypy* ]]; then
 fi
 
 source ~/.venv/bin/activate
+
+###I/O files for testing
+# basic.mal -- run call testing
+cat << EOF > basic.mal
+MOVEI V00, R0
+END
+EOF
+
 tox -- $TOX_FLAGS
