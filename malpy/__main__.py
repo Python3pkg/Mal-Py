@@ -29,7 +29,8 @@ def call(opts, args):
     """
     parser = malpy.parser.Parser()
     runner = malpy.cycleanalyzer.CycleAnalyzer()
-    opts = dict(opts)
+
+    opts = dict(opts or [])
     for arg in args:
         memory = []
         if "-m" in opts or "--memory" in opts:
