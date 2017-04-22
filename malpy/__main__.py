@@ -29,9 +29,20 @@ def call(opts, args):
     """
     parser = malpy.parser.Parser()
     runner = malpy.cycleanalyzer.CycleAnalyzer()
+    opts = dict(opts)
     for arg in args:
-        memory = list(range(64))
-        shuffle(memory)
+        memory = []
+        if "-m" in opts or "--memory" in opts:
+            try:
+                memory = list(map(int,
+                                  opts.get("-m", opts.get("--memory", ""))
+                                  .split()))
+            except Exception as err:
+
+                print(err)
+        if len(memory) != 64:
+            memory = list(range(64))
+            shuffle(memory)
         token_ast = parser.parse(open(arg).read())
         if not any([token[0] == 'E' for token in token_ast]):
             output = runner.run(token_ast, memory)
@@ -51,7 +62,7 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "h", ["help"])
+            opts, args = getopt.getopt(argv[1:], "hm:", ["help", "memory="])
         except getopt.error as msg:
             raise Usage(msg)
 
