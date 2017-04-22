@@ -112,7 +112,6 @@ class CycleAnalyzer(malpy.actionrunner.ActionRunner):
                 self._create_operation(opcode)(operands)
                 if self.program_counter \
                         in self.states.get(self.curr_state, []):
-                    print(self.states)
                     self.cycle = True
                 else:
                     self.states[self.curr_state] = \
