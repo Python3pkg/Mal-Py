@@ -9,17 +9,17 @@ cache:
 matrix:
     include:
         - python: 2.6 # these are just to make travis's UI a bit prettier
-          env: TOXENV=py26
+          env: TOXENV=py26 VERSION=2.6.9
         - python: 2.7
-          env: TOXENV=py27
+          env: TOXENV=py27 VERSION=2.7.13
         - python: 3.3
-          env: TOXENV=py33
+          env: TOXENV=py33 VERSION=3.3.6
         - python: 3.4
-          env: TOXENV=py34
+          env: TOXENV=py34 VERSION=3.4.6
         - python: 3.5
-          env: TOXENV=py35
+          env: TOXENV=py35 VERSION=3.5.3
         - python: 3.6
-          env: TOXENV=py36
+          env: TOXENV=py36 VERSION=3.6.0
         - python: pypy
           env: TOXENV=pypy-nocoverage PYPY_VERSION=2.6.1
         - python: pypy
@@ -27,37 +27,37 @@ matrix:
         - python: pypy
           env: TOXENV=pypy PYPY_VERSION=5.6.0
         - python: 2.7
-          env: TOXENV=docs
+          env: TOXENV=docs VERSION=2.7.13
           addons:
               apt:
                   packages:
                       - libenchant-dev
         - python: 2.7
-          env: TOXENV=pep8
+          env: TOXENV=pep8 VERSION=2.7.13
         - python: 3.4
-          env: TOXENV=py3pep8
+          env: TOXENV=py3pep8 VERSION=3.6.0
         - language: generic
           os: osx
           # 8.1 is macOS 10.12.x
           # see: https://docs.travis-ci.com/user/osx-ci-environment/
           osx_image: xcode8.1
-          env: TOXENV=py27
+          env: TOXENV=py27 VERSION=2.7.13
         - language: generic
           os: osx
           osx_image: xcode8.1
-          env: TOXENV=py33
+          env: TOXENV=py33 VERSION=3.3.6
         - language: generic
           os: osx
           osx_image: xcode8.1
-          env: TOXENV=py34 
+          env: TOXENV=py34  VERSION=3.4.6
         - language: generic
           os: osx
           osx_image: xcode8.1
-          env: TOXENV=py35 
+          env: TOXENV=py35  VERSION=3.5.3
         - language: generic
           os: osx
           osx_image: xcode8.1
-          env: TOXENV=py36 
+          env: TOXENV=py36  VERSION=3.6.0
         - language: generic
           os: osx
           osx_image: xcode8.1
@@ -65,21 +65,21 @@ matrix:
         - language: generic
           os: osx
           osx_image: xcode8.1
-          env: TOXENV=py27
+          env: TOXENV=py27 VERSION=2.7.13
         - language: generic
           os: osx
           # 7.3 is OS X 10.11.x
           osx_image: xcode7.3
-          env: TOXENV=py27 
+          env: TOXENV=py27 VERSION=2.7.13
         - language: generic
           os: osx
           # 6.4 is OS X 10.10.x
           osx_image: xcode6.4
-          env: TOXENV=py27 
+          env: TOXENV=py27 VERSION=2.7.13
         - language: generic
           os: osx
           osx_image: xcode8.1
-          env: TOXENV=docs 
+          env: TOXENV=docs VERSION=2.7.13
 
 install:
     - ./.travis/install.sh

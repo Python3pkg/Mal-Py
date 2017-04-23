@@ -32,4 +32,10 @@ BR L3
 END
 EOF
 
+# error.mal -- run call testing with error in code
+cat << EOF > error.mal
+LOAD
+END
+EOF
+
 tox -- $TOX_FLAGS

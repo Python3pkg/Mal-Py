@@ -30,13 +30,13 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
             pyenv install 3.6.0
             pyenv global 3.6.0
             ;;
-        pypy*)
-            pyenv install "pypy-$PYPY_VERSION"
-            pyenv global "pypy-$PYPY_VERSION"
-            ;;
         pypy3)
             pyenv install pypy3-2.4.0
             pyenv global pypy3-2.4.0
+            ;;
+        pypy*)
+            pyenv install "pypy-$PYPY_VERSION"
+            pyenv global "pypy-$PYPY_VERSION"
             ;;
         docs)
             brew install enchant
@@ -49,15 +49,24 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
 else
     # temporary pyenv installation to get latest pypy until the travis
     # container infra is upgraded
-    if [[ "${TOXENV}" = pypy* ]]; then
-        curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
-        PYENV_ROOT="$HOME/.pyenv"
-        PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        pyenv update
+
+    curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+    PYENV_ROOT="$HOME/.pyenv"
+    PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    pyenv update
+
+    if [[ "${TOXENV}" = pypy3* ]]; then
+        pyenv install "pypy3-$PYPY_VERSION"
+        pyenv global "pypy3-$PYPY_VERSION"
+    elif [[ "${TOXENV}" = pypy* ]]; then
         pyenv install "pypy-$PYPY_VERSION"
         pyenv global "pypy-$PYPY_VERSION"
+    elif [[ -n "${VERSION}" ]]; then
+        pyenv install "${VERSION}"
+        pyenv global "${VERSION}"
     fi
+
     pip install virtualenv coverage
 fi
 

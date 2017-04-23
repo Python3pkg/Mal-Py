@@ -38,9 +38,10 @@ def call(opts, args):
                 memory = list(map(int,
                                   opts.get("-m", opts.get("--memory", ""))
                                   .split()))
-            except Exception as err:
+            except ValueError as err:
+                print(err, file=sys.stderr)
+                return 1
 
-                print(err)
         if len(memory) != 64:
             memory = list(range(64))
             shuffle(memory)

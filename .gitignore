@@ -16,3 +16,4 @@ malpy/__pycache__/
 tests/__pycache__/
 .tox/
 .cache/
+htmlcov/
