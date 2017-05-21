@@ -2,7 +2,7 @@
 """
 malpy.__main__ Tets
 """
-from __future__ import print_function
+
 
 from nose.tools import assert_equal
 
@@ -31,10 +31,10 @@ class TestMalPy(object):
     def test_call_m(self):
         assert_equal(0, call([("-m", "")], ['basic.mal']))
         assert_equal(0, call([("-m",
-                               " ".join(map(str, range(64))))],
+                               " ".join(map(str, list(range(64)))))],
                              ['basic.mal']))
         assert_equal(0, call([("-m",
-                               " ".join(map(str, range(10))))],
+                               " ".join(map(str, list(range(10)))))],
                              ['basic.mal']))
         assert_equal(1, call([("-m", "test_bad_literal")],
                              ['basic.mal']))
@@ -42,10 +42,10 @@ class TestMalPy(object):
     def test_call_memory(self):
         assert_equal(0, call([("--memory", "")], ['basic.mal']))
         assert_equal(0, call([("--memory",
-                               " ".join(map(str, range(64))))],
+                               " ".join(map(str, list(range(64)))))],
                              ['basic.mal']))
         assert_equal(0, call([("--memory",
-                               " ".join(map(str, range(10))))],
+                               " ".join(map(str, list(range(10)))))],
                              ['basic.mal']))
         assert_equal(1, call([("--memory", "test_bad_literal")],
                              ['basic.mal']))

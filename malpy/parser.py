@@ -103,7 +103,7 @@ class Parser(object):
         lines += [self._line()]
         while self.next_token and self.current_token:
             lines += [self._line()]
-        return list(filter(None, lines))
+        return list([_f for _f in lines if _f])
 
     def _line(self):
         line = self._instruction()
@@ -127,7 +127,7 @@ class Parser(object):
             operand = self._operand()
             operands.append(operand)
 
-        operands = list(filter(None, operands))
+        operands = list([_f for _f in operands if _f])
 
         if len(operands) == self.operand_counts[operation_code]:
             return [operation_code, operands]

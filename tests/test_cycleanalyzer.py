@@ -2,7 +2,7 @@
 """
 malpy.cycleanalyzer.CycleAnalyzer Tests
 """
-from __future__ import print_function
+
 
 from nose.tools import assert_equal
 

@@ -4,7 +4,7 @@
 """The Mal Language Parser and Runtime Environment main script
 
 """
-from __future__ import print_function
+
 
 import getopt
 import sys

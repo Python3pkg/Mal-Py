@@ -2,7 +2,7 @@
 """Mal Runtime environment with JIT Actions.
 
 """
-from __future__ import print_function
+
 
 
 class Flags(object):
@@ -88,7 +88,7 @@ class ActionRunner(object):
 
     def _create_operation(self, opcode):
         def _function(operands):
-            ots = zip(operands, self.types[opcode])
+            ots = list(zip(operands, self.types[opcode]))
             if all([op.startswith(typ) for op, typ in ots]):
                 ops = [self._from_hex(op)
                        if op[0] == 'R' else self._from_dec(op)
